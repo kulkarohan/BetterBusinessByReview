@@ -22,8 +22,6 @@ from itertools import count
 from flask import jsonify
 import requests
 from flask_cors import CORS
-
-
 warnings.filterwarnings('ignore')
 
 nlp = spacy.load("./down_sm/en_core_web_sm-2.1.0/en_core_web_sm/en_core_web_sm-2.1.0")
@@ -66,9 +64,8 @@ def ValuePredictor(yelp_url, from_isbn=False):
     s = Scraper()
     s.scrape()
     df = s.data#converts scraped data into 
-    df = df.head(100)
 
-    nlp.Defaults.stop_words |= {'will','not','friends','amazing','awesome','first','he','check-in','=','= =','male','u','want', 'u want', 'cuz','him',"i've", 'deaf','on', 'her','told','told him','ins', 'check-ins','check-in','check','I', 'i"m', 'i', ' ', 'it', "it's", 'it.','they','coffee','place','they', 'the', 'this','its', 'l','-','they','this','don"t','the ', ' the', 'it', 'i"ve', 'i"m', '!', '1','2','3','4', '5','6','7','8','9','0','/','.',','}
+    nlp.Defaults.stop_words |= {'will','because','not','friends','amazing','awesome','first','he','check-in','=','= =','male','u','want', 'u want', 'cuz','him',"i've", 'deaf','on', 'her','told','told him','ins', 'check-ins','check-in','check','I', 'i"m', 'i', ' ', 'it', "it's", 'it.','they','coffee','place','they', 'the', 'this','its', 'l','-','they','this','don"t','the ', ' the', 'it', 'i"ve', 'i"m', '!', '1','2','3','4', '5','6','7','8','9','0','/','.',','}
 
     corpus = st.CorpusFromPandas(df, 
                              category_col=2, 
@@ -80,13 +77,13 @@ def ValuePredictor(yelp_url, from_isbn=False):
 
     term_freq_df['poorratingscore'] = corpus.get_scaled_f_scores('1.0 star rating')
     dp = term_freq_df.sort_values(by= 'poorratingscore', ascending = False)
-    for i in dp.index: 
-        if ' ' in i:
-            dp = dp.drop([i])
+#     for i in dp.index: 
+#         if ' ' in i:
+#             dp = dp.drop([i])
     df = term_freq_df.sort_values(by= 'highratingscore', ascending = False)
-    for i in df.index: 
-        if ' ' in i:
-            df = df.drop([i])
+#     for i in df.index: 
+#         if ' ' in i:
+#             df = df.drop([i])
     df = df[['highratingscore', 'poorratingscore']]
 
     df['highratingscore'] = round(df['highratingscore'], 2)
@@ -116,16 +113,16 @@ def index():
 
 #hold and run the results page
 @app.route('/result', methods = ['POST'])
-def test():#will capture our predictions, handles result
+def result():#will capture our predictions, handles result
 #     content_type = request.headers["content-type"]
 #     if content_type == "application/json":
     if request.method == 'POST':
         to_predict_list = request.values['yelp_url']
-        test = ValuePredictor(to_predict_list)
+        result = ValuePredictor(to_predict_list)
     #         return jsonify(test)
 
         response = app.response_class(
-            response=json.dumps(test),
+            response=json.dumps(result),
             status=200,
             mimetype='application/json')
 
