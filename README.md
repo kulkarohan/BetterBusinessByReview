@@ -8,7 +8,11 @@ These files are based on the collaborative efforts of Alfredo Quintana, Andrew A
 ### Running Flask locally
 The following files:
 basic-flaskapp
+![alt text](https://ibb.co/XJyJj9R)
+![alt text](https://ibb.co/Zg2f4VN)
 flaskbootstrap
+![alt text](https://ibb.co/xShwqfV)
+![alt text](https://ibb.co/GsWQ3HT)
 are individual pipenv environments to run two identically functional versions of the app. The only difference is that the flaskbootstrap version has bootstrap formatting applied, and instead of json, it returns a string formatted with bootstrap line items. 
 ### notebooks
 scraper-to-df-for-app.ipynb is the comprehensive IPython notebook that one can run on Jupyter Labs or Jupyter Notebooks. 
