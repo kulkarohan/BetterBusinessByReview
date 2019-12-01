@@ -1,26 +1,26 @@
 # Tally AI Lambda Labs19 Starter Files 
 
-These files are based on the collaborative effors of Alfredo Quintana, Andrew Allen, Anthony Piazza, Arvin Agas, Enrique Collado, Kevona Webb, Kemberly Eliscar, Lily Su, Melissa Kemp, Obaida Albaroudi and Richany Nguon with guidance from Crawford Collins as a Project Manager from Better Business by Review buildweek
+These files are based on the collaborative efforts of Alfredo Quintana, Andrew Allen, Anthony Piazza, Arvin Agas, Enrique Collado, Kevona Webb, Kemberly Eliscar, Lily Su, Melissa Kemp, Obaida Albaroudi and Richany Nguon with guidance from Crawford Collins as a Project Manager from Better Business by Review buildweek. https://business-recommendation.netlify.com/index.html
 
 ## Getting Started 
 
 ### DS
-#### Running Flask locally
+### Running Flask locally
 The following files:
 basic-flaskapp
 flaskbootstrap
 are individual pipenv environments to run two identically functional versions of the app. The only difference is that the flaskbootstrap version has bootstrap formatting applied, and instead of json, it returns a string formatted with bootstrap line items. 
-####notebooks
+### notebooks
 scraper-to-df-for-app.ipynb is the comprehensive IPython notebook that one can run on Jupyter Labs or Jupyter Notebooks. 
 sampleNLP-projectCoffeeShopDataset is a folder containing open data from data.world of coffee shops in the Austin area where the scattertext library is used to explore the dataset.
 explorations is a folder that contains lda topic modeling explorations on yelp reviews from the scraper-to-df-for-app.ipynb file. 
-####webscraper
+### webscraper
 The webscraper is a .py file created by Kevona Webb. The same code is run in all other instances of the notebooks that may contain a web scraper. 
-####usingAPIs
+### usingAPIs
 Contains explorations of accessing the YelpAPI
 
-###UX
-####visualideasforUI
+### UX
+### visualideasforUI
 Contains storyboard ideas for an explainer video for the TallyAI brand. Please feel free to use as little or as much for inspiration and guidance.
 
 Some fundamental Questions: 
