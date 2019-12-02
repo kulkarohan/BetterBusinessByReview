@@ -1,6 +1,12 @@
 # Tally AI Lambda Labs19 Starter Files 
 
-These files are based on the collaborative efforts of Alfredo Quintana, Andrew Allen, Anthony Piazza, Arvin Agas, Enrique Collado, Kevona Webb, Kemberly Eliscar, Lily Su, Melissa Kemp, Obaida Albaroudi and Richany Nguon with guidance from Crawford Collins as a Project Manager from Better Business by Review buildweek. https://business-recommendation.netlify.com/index.html
+These files are based on the collaborative efforts of Alfredo Quintana, Andrew Allen, Anthony Piazza, Arvin Agas, Enrique Collado, Kevona Webb, Kemberly Eliscar, Lily Su, Melissa Kemp, Obaida Albaroudi and Richany Nguon with guidance from Crawford Collins as a Project Manager from Better Business by Review buildweek. The front-end was never hooked up with the backend, so the finalized version only has login authentification and a homepage: https://business-recommendation.netlify.com/index.html
+
+Here is the Labs 19 Project Pitch:
+https://www.youtube.com/watch?v=YA5EYLWVp7Y&
+
+Here is a walkthrough of the two Flask apps that are here in the repo:
+https://www.youtube.com/watch?v=FpM6yXa6rGI&
 
 ## Getting Started 
 
