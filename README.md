@@ -15,6 +15,8 @@ The following files:
 ![alt text](https://i.ibb.co/gMyQZPs/03.png)
 ![alt text](https://i.ibb.co/5YrhxKF/04.png)
 are individual pipenv environments to run two identically functional versions of the app. The only difference is that the flaskbootstrap version has bootstrap formatting applied, and instead of json, it returns a string formatted with bootstrap line items. 
+
+### Please note that running the myproject.py will be running at http://127.0.0.1:5000/ instead of http://0.0.0.0:5000/
 ### notebooks
 scraper-to-df-for-app.ipynb is the comprehensive IPython notebook that one can run on Jupyter Labs or Jupyter Notebooks. 
 sampleNLP-projectCoffeeShopDataset is a folder containing open data from data.world of coffee shops in the Austin area where the scattertext library is used to explore the dataset.
