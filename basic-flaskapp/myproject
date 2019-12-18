@@ -1,9 +1,0 @@
-server {
-    listen 80;
-    server_name tallyai.xyz www.tallyai.xyz;
-
-    location / {
-        include uwsgi_params;
-        uwsgi_pass unix:/home/lily/myproject/myproject.sock;
-    }
-}
