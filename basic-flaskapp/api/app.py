@@ -1,32 +1,33 @@
-import os
-import numpy as np
-import flask
-import pickle
 from flask import Flask, render_template, request, jsonify
 import json
-import os
-import tarfile
 import warnings
-import numpy as np
 import pandas as pd
-import requests
 import spacy
-import wget
-from spacy.lang.en import English
 import scattertext as st
-from json import loads
 from lxml import html
 from requests import Session
 from concurrent.futures import ThreadPoolExecutor as Executor
-from itertools import count
-from flask import jsonify
 import requests
 from flask_cors import CORS
+from decouple import config
+# from flask import request
+# from itertools import count
+# from flask import jsonify
+# from json import loads
+# import wget
+# from spacy.lang.en import English
+# import os
+# import tarfile
+# import os
+# import numpy as np
+# import flask
+# import pickle
+
 warnings.filterwarnings('ignore')
 
 nlp = spacy.load("./down_sm/en_core_web_sm-2.1.0/en_core_web_sm/en_core_web_sm-2.1.0")
 
-def ValuePredictor(yelp_url, from_isbn=False):
+def ValuePredictor(bid, from_isbn=False):
     '''Takes a url, scrape site for reviews
     and calculates the term frequencies 
     sorts and returns the top 10 as a json object
@@ -34,9 +35,9 @@ def ValuePredictor(yelp_url, from_isbn=False):
 
     base_url = "https://www.yelp.com/biz/" # add business id
     api_url = "/review_feed?sort_by=date_desc&start="
-    bid = yelp_url.replace('https://www.yelp.com/biz/','')
-    if '?' in yelp_url:#deletes everything after "?" in url 
-        bid = yelp_url.split('?')[0]
+    # bid = yelp_url.replace('https://www.yelp.com/biz/','')
+    # if '?' in yelp_url:#deletes everything after "?" in url
+    #     bid = yelp_url.split('?')[0]
 
     class Scraper():
         def __init__(self):
@@ -45,6 +46,7 @@ def ValuePredictor(yelp_url, from_isbn=False):
         def get_data(self, n, bid=bid):
             with Session() as s:
                 with s.get(base_url+bid+api_url+str(n*20)) as resp: #makes an http get request to given url and returns response as json
+                    print(base_url+bid+api_url)
                     r = dict(resp.json()) #converts json response into a dictionary
                     _html = html.fromstring(r['review_list']) #loads from dictionary
 
@@ -76,28 +78,18 @@ def ValuePredictor(yelp_url, from_isbn=False):
     term_freq_df['highratingscore'] = corpus.get_scaled_f_scores('5.0 star rating')
 
     term_freq_df['poorratingscore'] = corpus.get_scaled_f_scores('1.0 star rating')
-    dp = term_freq_df.sort_values(by= 'poorratingscore', ascending = False)
-#     for i in dp.index: 
-#         if ' ' in i:
-#             dp = dp.drop([i])
-    df = term_freq_df.sort_values(by= 'highratingscore', ascending = False)
-#     for i in df.index: 
-#         if ' ' in i:
-#             df = df.drop([i])
-    df = df[['highratingscore', 'poorratingscore']]
-
-    df['highratingscore'] = round(df['highratingscore'], 2)
-    df['poorratingscore'] = round(df['poorratingscore'], 2)
-    df = df.reset_index(drop=False)
-    df = df.head(5)
-
-    dp = dp[['highratingscore', 'poorratingscore']]
-    dp['highratingscore'] = round(dp['highratingscore'], 2)
-    dp['poorratingscore'] = round(dp['poorratingscore'], 2)
-    dp = dp.reset_index(drop=False)
-    dp = dp.head(5)
-    df = pd.concat([df,dp])
-    return df.to_dict('records')
+    dh = term_freq_df.sort_values(by= 'highratingscore', ascending = False)
+    dh = dh[['highratingscore', 'poorratingscore']]
+    dh = dh.reset_index(drop=False)
+    dh = dh.rename(columns={'highratingscore': 'score'})
+    dh = dh.drop(columns='poorratingscore')
+    positive_df = dh.head(10)
+    negative_df = dh.tail(10)
+    results = {'positive': [{'term': pos_term, 'score': pos_score} for pos_term, pos_score in
+                            zip(positive_df['term'], positive_df['score'])],
+               'negative': [{'term': neg_term, 'score': neg_score} for neg_term, neg_score in
+                            zip(negative_df['term'], negative_df['score'])]}
+    return results
 
 
 #app
@@ -106,29 +98,31 @@ CORS(app)
 
 
 #routes
-@app.route('/')#defaults to this just in case, legacy reasons
-@app.route('/index')
-def index():
-    return flask.render_template('index.html')#we are going to have a form
+@app.route('/')
 
-#hold and run the results page
-@app.route('/result', methods = ['POST'])
-def result():#will capture our predictions, handles result
-#     content_type = request.headers["content-type"]
-#     if content_type == "application/json":
-    if request.method == 'POST':
-        to_predict_list = request.values['yelp_url']
-        result = ValuePredictor(to_predict_list)
-    #         return jsonify(test)
+@app.route("/yelp/<business_id>", methods=['GET', 'POST'])
+def yelp(business_id):
+    """
+    Endpoint for Yelp API. Requires business_id to retrieve info.
+    """
+    API_KEY = config('YELP_API_KEY')
+    HEADERS = {'Authorization': f'Bearer {API_KEY}'}
 
-        response = app.response_class(
-            response=json.dumps(result),
-            status=200,
-            mimetype='application/json')
+    BUSINESS_ID = business_id
+    URL = f'https://api.yelp.com/v3/businesses/{BUSINESS_ID}/reviews'
+    req = requests.get(URL, headers=HEADERS)
+    parsed = json.loads(req.text)
+    reviews = parsed['reviews']
+    reviews_json = []
+    for review in reviews:
+        output = {'id': review['id'], 'time': review['time_created'], 'text': review['text'], 'rating': review['rating']}
+        reviews_json.append(output)
 
-        return response
-#     else:
-#         return jsonify("Content-Type is not application/json")
+    nlp_prediction = ValuePredictor(BUSINESS_ID)
+    result = json.dumps(nlp_prediction, indent=2)
+
+    return result
+
 
 #app run
 if __name__ == '__main__':
